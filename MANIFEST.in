@@ -1,0 +1,2 @@
+include configs/config.yaml
+include .env
