@@ -8,3 +8,4 @@ class LinkManager:
         if len(links) == 1:
             return True, links[0]
         return False, None
+    
