@@ -19,8 +19,6 @@ def setup_events(client, config):
         if message.author.bot:
             return
         if message.channel.category and message.channel.category.name == category_name:
-            print(message.content)
-            valid = "hola" in message.content
             valid, link = link_manager.validate_message(message.content)
             if not valid:
                 await message.delete()
