@@ -1,14 +1,24 @@
 from services.link_manager import LinkManager
 from services.queue_manager import QueueManager
+from services.youtube_service import YouTubeService
 import discord
 import asyncio
 from datetime import timedelta
 
 def setup_events(client, config):
-    queue = QueueManager()
-    link_manager = LinkManager()
     category_name = config["karaparty_category"]
     send_channel_name = config["send_songs_channel"]
+    client_secret_file=config["youtube"]["client_secret_file"]
+    credentials_file=config["youtube"]["credentials_file"]
+    playlist_id=config["youtube"]["playlist_id"]
+
+
+    queue = QueueManager()
+    link_manager = LinkManager()
+    youtube_service = YouTubeService(   client_secret_file=client_secret_file,
+                                        credentials_file=credentials_file,
+                                        playlist_id=playlist_id
+                                        )
 
     @client.event
     async def on_ready():
@@ -32,6 +42,7 @@ def setup_events(client, config):
         while not client.is_closed():
             if not queue.is_empty():
                 song = queue.pop_link()
+                youtube_service.add_video_to_playlist(song['link'])
                 await send_channel.send(f"🎶 **Song Added**\n**Link**: {song['link']}\n**Posted by**: {song['user']}\n**Channel**: #{song['channel']}\n**Time**: {song['timestamp']} UTC")
             await asyncio.sleep(30)
 

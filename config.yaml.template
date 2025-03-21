@@ -1,0 +1,8 @@
+Create a folder bot/configs and create the file config.yaml with the content below
+
+karaparty_category: "KARAPARTY"
+send_songs_channel: "canciones_en_fila"
+youtube:
+  playlist_id: "the id"
+  credentials_file: "configs/youtube_credentials.json"
+  client_secret_file: "configs/youtube_client_secret.json"
