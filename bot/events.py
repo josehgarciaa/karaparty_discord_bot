@@ -41,9 +41,21 @@ def setup_events(client, config):
         send_channel = discord.utils.get(client.get_all_channels(), name=send_channel_name)
         while not client.is_closed():
             if not queue.is_empty():
-                song = queue.pop_link()
-                youtube_service.add_video_to_playlist(song['link'])
-                await send_channel.send(f"🎶 **Song Added**\n**Link**: {song['link']}\n**Posted by**: {song['user']}\n**Channel**: #{song['channel']}\n**Time**: {song['timestamp']} UTC")
+                song = queue.get_link()
+                if song:
+                    try:
+                        youtube_service.add_video_to_playlist(song['link'])
+                        await send_channel.send(
+                            f"🎶 **Song Added**\n**Link**: {song['link']}\n"
+                            f"**Posted by**: {song['user']}\n"
+                            f"**Channel**: #{song['channel']}\n"
+                            f"**Time**: {song['timestamp']} UTC"
+                        )
+                    except Exception as e:
+                        error_message = f"⚠️ Error adding video to playlist: {e}\n"
+                        print(error_message)
+                        await send_channel.send(f"⚠️ Failed to add video {song['link']} to playlist. Error: {str(e)}")
+                        raise
             await asyncio.sleep(30)
 
     async def setup_hook():
