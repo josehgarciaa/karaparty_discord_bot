@@ -6,6 +6,7 @@ dependencies:
   - pip
   - pip:
       - discord.py
+      - pynacl
       - pyyaml
       - python-dotenv
       - google-auth

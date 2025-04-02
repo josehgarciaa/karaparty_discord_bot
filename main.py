@@ -1,5 +1,5 @@
-from bot.core import BotCore
+from bot.core import KarapartyBot
 
 if __name__ == "__main__":
-    bot = BotCore()
-    bot.run()
+    bot = KarapartyBot(config_file="configs/config.yaml")
+    bot.run_bot()

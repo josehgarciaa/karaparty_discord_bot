@@ -4,6 +4,10 @@ class QueueManager:
     def __init__(self):
         self.queues = {}
         self.team_order = deque()
+        self.song_list = [""]
+
+    def is_in_queue(self,link):
+        return (link in self.song_list  )
 
     def add_link(self, link, user, channel, timestamp):
         team = channel.name
@@ -18,6 +22,7 @@ class QueueManager:
             "channel_id": channel.id,
             "timestamp": timestamp.strftime("%Y-%m-%d %H:%M")
         })
+        self.song_list.append(link)
 
     def get_link(self):
         while self.team_order:

@@ -1,19 +1,32 @@
 import discord
-import os
-from dotenv import load_dotenv
-from bot.events import setup_events
+from discord.ext import commands
 import yaml
 
-class BotCore:
-    def __init__(self):
-        load_dotenv()
-        self.token = os.getenv("DISCORD_TOKEN")
+from  utils.error_reporter import report_error
+
+
+class KarapartyBot(commands.Bot):# the self.run command is defined in commands.bot
+    def __init__(self, config_file):
+        try:
+            with open(config_file, 'r') as f:
+                self.config = yaml.safe_load(f)
+        except Exception as e:
+            report_error(e, context=f"Please, remember to fill your configs/config.yaml file. Template is at config.yaml.template ")
+
+        
+        #This tell the bot what shall it listen to
         intents = discord.Intents.default()
         intents.message_content = True
-        self.client = discord.Client(intents=intents)
-        with open("configs/config.yaml") as f:
-            self.config = yaml.safe_load(f)
+        intents.guilds = True
+        intents.messages = True
 
-    def run(self):
-        setup_events(self.client, self.config)
-        self.client.run(self.token)
+        super().__init__(command_prefix="!", intents=intents)
+
+    async def setup_hook(self):
+        # Load all cogs
+        await self.load_extension('cogs.events')
+        await self.load_extension('cogs.music_dispatcher')
+
+    def run_bot(self):
+        token = self.config['discord']['token']
+        self.run(token)
