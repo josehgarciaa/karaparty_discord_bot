@@ -10,10 +10,12 @@
 *.userosscache
 *.sln.docstates
 .env
-configs/config.yaml
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
-configs/*
+*configs/*
+build
+build/*
+*egg-info*
 # Mono auto generated files
 mono_crash.*
 

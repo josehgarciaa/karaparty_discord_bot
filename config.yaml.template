@@ -1,8 +1,29 @@
-Create a folder bot/configs and create the file config.yaml with the content below
 
-karaparty_category: "KARAPARTY"
-send_songs_channel: "canciones_en_fila"
+
+bot:
+  monitored_category: "KARAPARTY"
+  monitored_channels: [
+    "🎤equipo︱1︱", "🎤equipo︱2︱", "🎤equipo︱3︱", "🎤equipo︱4︱", "🎤equipo︱5︱", "🎤equipo︱6︱",
+    "🎤equipo︱7︱", "🎤equipo︱8︱", "🎤equipo︱9︱", "🎤equipo︱10︱", "🎤equipo︱11︱", "🎤equipo︱12︱",
+    "🎤equipo︱13︱", "🎤equipo︱14︱", "🎤equipo︱15︱", "🎤equipo︱16︱", "🎤equipo︱17︱", "🎤equipo︱18︱",
+    "🎤equipo︱19︱", "🎤equipo︱20︱", "🎤equipo︱21︱", "🎤equipo︱22︱", "🎤equipo︱23︱", "🎤equipo︱24︱",
+    "🎤equipo︱25︱", "🎤equipo︱26︱", "🎤equipo︱27︱", "🎤equipo︱28︱", "🎤equipo︱29︱", "🎤equipo︱30|"
+  ]
+  notification_channel: "notificaciones"
+  admin_log_channel: "admin_log"
+  output_channel: "fila"
+
+  errors:
+    content: "Wrong content"
+
+
+
 youtube:
-  playlist_id: "the id"
+  playlist_id: "PLPeEFc_g-zr04alhA-FQnm23BNyvkjbcT"
   credentials_file: "configs/youtube_credentials.json"
   client_secret_file: "configs/youtube_client_secret.json"
+
+discord:
+  token: "TOKEN"
+
+
