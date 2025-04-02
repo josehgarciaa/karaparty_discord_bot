@@ -19,7 +19,12 @@ class MusicDispatcherCog(commands.Cog):
         """
 
         self.bot = bot
-        self.queue = QueueManager()
+        self.queue: QueueManager = bot.queue
+
+        self.notification_channel: str = bot.config["bot"]["notification_channel"]
+        self.admin_channel: str = bot.config["bot"]["admin_log_channel"]
+        self.output_channel: str = bot.config["bot"]["output_channel"]
+
 
 
         yt_conf: dict[str, Any] = bot.config["youtube"]        
@@ -29,7 +34,6 @@ class MusicDispatcherCog(commands.Cog):
             playlist_id=yt_conf["playlist_id"]
         )        
 
-        self.output_channel: str = bot.config["bot"]["output_channel"]
         # Start the background task when the cog is initialized
         self.dispatch_songs.start()
 
@@ -70,6 +74,7 @@ class MusicDispatcherCog(commands.Cog):
                         )
                         await send_channel.send(content)
                     except Exception as e:
+                        send_channel = discord.utils.get(self.bot.get_all_channels(), name=self.admin_channel)
                         error_message = f"⚠️ Error adding video: {e}"
                         print(error_message)
                         await send_channel.send(error_message)#

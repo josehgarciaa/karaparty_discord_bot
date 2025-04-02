@@ -1,7 +1,7 @@
 
 
 bot:
-  karaparty_category: "KARAPARTY"
+  monitored_category: "KARAPARTY"
   monitored_channels: [
     "🎤equipo︱1︱", "🎤equipo︱2︱", "🎤equipo︱3︱", "🎤equipo︱4︱", "🎤equipo︱5︱", "🎤equipo︱6︱",
     "🎤equipo︱7︱", "🎤equipo︱8︱", "🎤equipo︱9︱", "🎤equipo︱10︱", "🎤equipo︱11︱", "🎤equipo︱12︱",
@@ -9,8 +9,9 @@ bot:
     "🎤equipo︱19︱", "🎤equipo︱20︱", "🎤equipo︱21︱", "🎤equipo︱22︱", "🎤equipo︱23︱", "🎤equipo︱24︱",
     "🎤equipo︱25︱", "🎤equipo︱26︱", "🎤equipo︱27︱", "🎤equipo︱28︱", "🎤equipo︱29︱", "🎤equipo︱30|"
   ]
-
-  output_channel: "canciones_en_fila"
+  notification_channel: "notificaciones"
+  admin_log_channel: "admin_log"
+  output_channel: "fila"
 
   errors:
     content: "Wrong content"
@@ -18,11 +19,11 @@ bot:
 
 
 youtube:
-  playlist_id: "PLAYLIST HERE"
+  playlist_id: "PLPeEFc_g-zr04alhA-FQnm23BNyvkjbcT"
   credentials_file: "configs/youtube_credentials.json"
   client_secret_file: "configs/youtube_client_secret.json"
 
 discord:
-  token: "TOKEN HERE"
+  token: "TOKEN"
 
 

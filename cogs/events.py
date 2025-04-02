@@ -22,12 +22,13 @@ class EventCog(commands.Cog):
         self.bot: commands.Bot = bot
         self.config: dict[str, Any] = bot.config
 
-        self.queue: QueueManager = QueueManager()
+        self.queue: QueueManager = bot.queue
         self.link_manager: LinkManager = LinkManager()
 
-        self.category_name: str = self.config["bot"]["karaparty_category"]
+        self.category_name: str = self.config["bot"]["monitored_category"]
         self.monitored_channels: list[str] = self.config["bot"]["monitored_channels"]
         self.output_channel: str = self.config["bot"]["output_channel"]
+        self.notification_channel: str = self.config["bot"]["notification_channel"]
         self.wrong_message_warning: str = self.config["bot"]["errors"]["content"]
 
     @commands.Cog.listener()
@@ -39,16 +40,16 @@ class EventCog(commands.Cog):
         This makes the method respond to the `on_ready` Discord event.
         """
         print(f'Logged in as {self.bot.user}')
+
         for guild in self.bot.guilds:
             print(f'Connected to server: {guild.name}')
-            default_channel: discord.TextChannel | None = discord.utils.get(
-                guild.text_channels,
-                name=self.output_channel
-            )
+            default_channel: discord.TextChannel | None = discord.utils.get(  
+                                                                            guild.text_channels,
+                                                                            name=self.notification_channel
+                                                                            )   
+
             if default_channel:
-                await default_channel.send(
-                    f"🚀 Bot is now online and connected to **{guild.name}**!"
-                )
+                await default_channel.send(f"KaraParty bot esta listo para operar en el servidor**{guild.name}**!" )
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
@@ -69,12 +70,16 @@ class EventCog(commands.Cog):
             return
 
         in_karaoke_category = (
-            message.channel.category
-            and message.channel.category.name == self.category_name
-        )
+                                message.channel.category and 
+                                message.channel.category.name == 
+                                self.category_name
+                              )   
+
+
         in_monitored_channel = message.channel.name in self.monitored_channels
 
         if in_karaoke_category and in_monitored_channel:
+            
             valid, link = self.link_manager.validate_message(message.content)
             if not valid:
                 await message.delete()
@@ -84,13 +89,13 @@ class EventCog(commands.Cog):
                 )
                 return
 
-            if self.queue.is_in_queue(link):
-                await message.channel.send(
-                    f"{message.author.mention} Error: La canción ya está en fila. Quizás quieras escoger otra.",
-                    delete_after=20
-                )
+            #if self.queue.is_in_queue(link):
+            #    await message.channel.send(
+            #        f"{message.author.mention} Error: La canción ya está en fila. Quizás quieras escoger otra.",
+            #        delete_after=20
+            #    )
                 return
-
+            
             self.queue.add_link(
                 link=link,
                 user=message.author,

@@ -13,6 +13,9 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 *configs/*
+build
+build/*
+*egg-info*
 # Mono auto generated files
 mono_crash.*
 
