@@ -1,4 +1,5 @@
-discord.py
+discord
 pyyaml
-python-dotenv
 pynacl
+selenium
+webdriver-manager
