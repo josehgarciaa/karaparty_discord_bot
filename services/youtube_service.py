@@ -33,45 +33,45 @@ class YouTubeService:
         return build(self.api_service_name, self.api_version, credentials=credentials)
 
 
-def add_video_to_playlist(self, youtube_video_url):
-    """
-    Adds a video to the YouTube playlist in FIFO order.
+    def add_video_to_playlist(self, youtube_video_url):
+        """
+        Adds a video to the YouTube playlist in FIFO order.
 
-    Parameters:
-    -----------
-    youtube_video_url : str
-        The full URL of the YouTube video to be added.
+        Parameters:
+        -----------
+        youtube_video_url : str
+            The full URL of the YouTube video to be added.
 
-    Returns:
-    --------
-    dict
-        The response from the YouTube Data API after inserting the video.
+        Returns:
+        --------
+        dict
+            The response from the YouTube Data API after inserting the video.
 
-    Behavior:
-    ---------
-    This function extracts the video ID from the provided URL and appends it to 
-    the playlist associated with `self.playlist_id`. The video is added at the 
-    end of the playlist, which ensures a FIFO order of playback (i.e., videos 
-    will play in the same order they were added). No manual position is set, 
-    relying on YouTube's default behavior to append at the end.
-    """
-    video_id = self.extract_video_id(youtube_video_url)
-    print(self.playlist_id)
+        Behavior:
+        ---------
+        This function extracts the video ID from the provided URL and appends it to 
+        the playlist associated with `self.playlist_id`. The video is added at the 
+        end of the playlist, which ensures a FIFO order of playback (i.e., videos 
+        will play in the same order they were added). No manual position is set, 
+        relying on YouTube's default behavior to append at the end.
+        """
+        video_id = self.extract_video_id(youtube_video_url)
+        print(self.playlist_id)
 
-    request = self.youtube.playlistItems().insert(
-        part="snippet",
-        body={
-            "snippet": {
-                "playlistId": self.playlist_id,
-                "resourceId": {
-                    "kind": "youtube#video",
-                    "videoId": video_id
+        request = self.youtube.playlistItems().insert(
+            part="snippet",
+            body={
+                "snippet": {
+                    "playlistId": self.playlist_id,
+                    "resourceId": {
+                        "kind": "youtube#video",
+                        "videoId": video_id
+                    }
                 }
             }
-        }
-    )
-    response = request.execute()
-    return response
+        )
+        response = request.execute()
+        return response
 
     @staticmethod
     def extract_video_id(url):
