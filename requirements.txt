@@ -4,3 +4,4 @@ pynacl
 selenium
 webdriver-manager
 aiofiles
+google-api-python-client
