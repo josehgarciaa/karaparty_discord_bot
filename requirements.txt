@@ -3,3 +3,4 @@ pyyaml
 pynacl
 selenium
 webdriver-manager
+aiofiles

@@ -10,20 +10,18 @@ bot:
     "🎤equipo︱25︱", "🎤equipo︱26︱", "🎤equipo︱27︱", "🎤equipo︱28︱", "🎤equipo︱29︱", "🎤equipo︱30|"
   ]
   notification_channel: "notificaciones"
-  admin_log_channel: "admin_log"
+  managment: "managment"
   output_channel: "fila"
-
-  errors:
-    content: "Wrong content"
 
 
 
 youtube:
-  playlist_id: "PLPeEFc_g-zr04alhA-FQnm23BNyvkjbcT"
+  playlist_id: 
   credentials_file: "configs/youtube_credentials.json"
   client_secret_file: "configs/youtube_client_secret.json"
 
 discord:
-  token: "TOKEN"
+  token: 
+
 
 

@@ -24,6 +24,12 @@ class QueueBuffer:
     def __init__(self) -> None:
         # List of pending song operations; each is a dict with "team" and "link".
         self.pending: List[Dict[str, str]] = []
+        self.dispatch_number = 3
+        
+    def set_dispatch_number(self, _dispatch_number):
+        if _dispatch_number > 0 :
+           self.dispatch_number = _dispatch_number
+        
 
     def add_song(self, team: str, link: str) -> Dict[str, Any]:
         """
@@ -112,7 +118,8 @@ class QueueBuffer:
             queue.add_link(link=link, team=team, timestamp=datetime.utcnow())
 
         # Dispatch up to 3 songs from the live queue.
-        for _ in range(3):
+        print("Dispatching ", self.dispatch_number, "songs")
+        for _ in range(self.dispatch_number):
             song = queue.get_link()
             if song:
                 dispatched_songs.append(song)

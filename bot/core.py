@@ -24,6 +24,7 @@ class KarapartyBot(commands.Bot):
             config_file (str): The path to the configuration YAML file.
         """
         try:
+            print(config_file)
             with open(config_file, "r", encoding="utf-8") as f:
                 self.config = yaml.safe_load(f)
         except Exception as e:
