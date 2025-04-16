@@ -50,8 +50,9 @@ class KarapartyBot(commands.Bot):
         """
         await self.load_extension("cogs.events")
         await self.load_extension("cogs.music_dispatcher")
-        #await self.load_extension("cogs.message_guard")
-
+        await self.load_extension("cogs.message_guard")
+        await self.load_extension("cogs.presentation_manager")
+        
     def run_bot(self) -> None:
         """
         Starts the bot using the Discord token from the configuration file.

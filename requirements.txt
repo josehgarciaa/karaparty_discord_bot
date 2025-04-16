@@ -5,3 +5,6 @@ selenium
 webdriver-manager
 aiofiles
 google-api-python-client
+openai 
+pydantic 
+instructor

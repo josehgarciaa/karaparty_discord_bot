@@ -22,7 +22,7 @@ class MessageGuardCog(commands.Cog):
         # Read configuration values
         self.allowed_channels: list[str] = bot.config["bot"]["monitored_channels"]
         self.monitored_category: str = bot.config["bot"]["monitored_category"]
-        self.warning_message: str = bot.config["bot"]["errors"]
+        self.warning_message: str = "Cant write here"
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
