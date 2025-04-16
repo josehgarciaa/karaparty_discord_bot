@@ -62,7 +62,7 @@ class MusicDispatcherCog(commands.Cog):
         async with aiofiles.open(file_name, 'w') as f:
             await f.write(json.dumps(data, indent=4))
 
-    @tasks.loop(seconds=2)
+    @tasks.loop(seconds=60)
     async def dispatch_songs(self):
         """
         Background loop task that runs every 2 minutes.

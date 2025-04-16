@@ -103,6 +103,7 @@ async def find_team_for_song(next_video_link: str, dispatched_songs, played_song
 
 async def on_youtube_playlist_page(driver: Chrome) -> bool:
     current_url = driver.current_url
+    print(current_url)
     return "youtube.com/watch" in current_url and "&list=" in current_url
 
 
