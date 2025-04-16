@@ -72,7 +72,6 @@ class PresentationManagerCog(commands.Cog):
 
         # Validate the message using the validator function.
         is_valid, output_message = self.validator(message)
-        await message.channel.send(f"{message.author.mention} {output_message}")
         
         if is_valid:
             # Find the role in the guild by name.
