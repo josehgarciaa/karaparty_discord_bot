@@ -38,6 +38,7 @@ class PresentationManagerCog(commands.Cog):
         # Read configuration values from bot.config
         self.target_channel: str = bot.config["bot"]["presentation_channel"]  # e.g., "presentation"
         self.assign_role: str = bot.config["bot"]["starting_role"]  # Role to assign if validated
+        self.previous_role: str = "Kai Oculto"
         self.instruction: str = bot.config["smart_bot"]["presentation_instruction"]
         self.smart_bot_key: str = bot.config["smart_bot"]["deepseek_key"]
         
@@ -71,25 +72,31 @@ class PresentationManagerCog(commands.Cog):
             return
 
         # Validate the message using the validator function.
+        is_valid = False 
+        output_message = ""
         is_valid, output_message = self.validator(message)
         
         if is_valid:
             # Find the role in the guild by name.
-            role = discord.utils.get(message.guild.roles, name=self.assign_role)
+            new_role = discord.utils.get(message.guild.roles, name=self.assign_role)
+            old_role = discord.utils.get(message.guild.roles, name=self.previous_role)
             if role is None:
                 print(f"[RoleAssigner] Role '{self.assign_role}' not found in guild '{message.guild.name}'.")
                 return
             try:
                 # Assign the role to the user.
-                await message.author.add_roles(role)
+                await message.author.remove_roles(old_role)
+                await message.author.add_roles(new_role)
                 # Send a confirmation message that auto-deletes after 30 seconds.
                 await message.channel.send(f"{message.author.mention} {output_message}")
                 print(f"[RoleAssigner] Assigned role '{role.name}' to user {message.author} and sent confirmation.")
+                return 
             except discord.Forbidden:
                 print(f"[RoleAssigner] Missing permissions to assign role '{role.name}' to user {message.author}.")
             except discord.HTTPException as e:
                 print(f"[RoleAssigner] Failed to assign role or send message: {e}")
-        else:
+        if not is_valid:
+            print("No es válido")
             await message.channel.send(f"{message.author.mention} {output_message}")
 
 
