@@ -80,7 +80,7 @@ class PresentationManagerCog(commands.Cog):
             # Find the role in the guild by name.
             new_role = discord.utils.get(message.guild.roles, name=self.assign_role)
             old_role = discord.utils.get(message.guild.roles, name=self.previous_role)
-            if role is None:
+            if new_role is None:
                 print(f"[RoleAssigner] Role '{self.assign_role}' not found in guild '{message.guild.name}'.")
                 return
             try:
