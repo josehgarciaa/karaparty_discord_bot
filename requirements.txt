@@ -11,3 +11,5 @@ instructor
 fastapi 
 uvicorn
 requests
+google-auth 
+google-auth-oauthlib 
