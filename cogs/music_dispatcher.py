@@ -115,17 +115,18 @@ class MusicDispatcherCog(commands.Cog):
 
     @tasks.loop(seconds=60)
     async def dispatch_songs(self):
+        print("Dispatching happening every:", self.dispatch_frequency, "seconds")
+        
         dispatched_songs = self.buffer.apply_to(self.queue)
-        print("Dispatching songs:")
-        print(self.queue._dispatched)
-
         if not dispatched_songs:
             return
 
         send_channel = discord.utils.get(self.bot.get_all_channels(), name=self.output_channel)
 
         for song in dispatched_songs:
+            print("Attempring to send the song:", song['link']," of team:", song['team'], "to youtube" )
             try:
+                print("The song was submitted")
                 self.youtube_service.add_video_to_playlist(song['link'])
                 content = (
                     f"🎶 **Canción en fila**\n"
@@ -136,6 +137,9 @@ class MusicDispatcherCog(commands.Cog):
                 if send_channel:
                     await send_channel.send(content)
             except Exception as e:
+                print("Problems sending the song")
+
+
                 managment_channel = discord.utils.get(self.bot.get_all_channels(), name=self.managment_channel)
                 error_message = f"⚠️ Error adding video: {e}"
                 print(error_message)

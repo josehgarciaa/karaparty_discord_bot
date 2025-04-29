@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from typing import List, Dict, Any
+from services.queue.queue_manager import QueueManager       # Our new live queue manager
 
 class QueueBuffer:
     """
@@ -91,7 +92,7 @@ class QueueBuffer:
                 return {"success": True, "warning_type": ""}
         return {"success": False, "warning_type": "edit_dispatched_song"}
 
-    def apply_to(self, queue: Any) -> List[dict]:
+    def apply_to(self, queue: QueueManager) -> List[dict]:
         """
         Applies all pending song additions to the live queue, then dispatches up to 3 songs.
         
@@ -118,14 +119,21 @@ class QueueBuffer:
             queue.add_link(link=link, team=team, timestamp=datetime.utcnow())
 
         # Dispatch up to 3 songs from the live queue.
-        print("Dispatching ", self.dispatch_number, "songs")
+        print("\n!------------------------------------!\nTrying to dispatch ", self.dispatch_number, "songs")
+        number_of_real_dispatched = 0
         for _ in range(self.dispatch_number):
             song = queue.get_link()
             if song:
                 dispatched_songs.append(song)
                 queue.mark_dispatched(song["link"], song["team"])
+                print("\t Dispatched: ", song["link"], song["team"])
+                number_of_real_dispatched+=1
             else:
                 break
+
+        if number_of_real_dispatched ==0:
+            print("No song ready to dispatch Finished")
+        print("Dispatch Finished\nx------------------------------------x\n")
 
         # Clear the buffer after applying operations.
         self.pending.clear()
