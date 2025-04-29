@@ -24,6 +24,8 @@ import requests
 import os
 import yaml
 from utils.error_reporter import report_error
+import re
+from urllib.parse import urlparse, parse_qs, urlencode
 
 
 def normalize_youtube_link(link):
@@ -170,7 +172,7 @@ async def save_json_async(file_name: str, data):
 async def find_team_for_song(next_video_link: str, played_songs):
     dispatched_songs = get_current_songs()
     for song in dispatched_songs:
-        if song["link"] == next_video_link and song not in played_songs:
+        if normalize_youtube_link(song["link"]) == normalize_youtube_link(next_video_link) and song not in played_songs:
             return song["team"], song
     return None, None
 
