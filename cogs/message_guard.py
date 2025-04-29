@@ -43,8 +43,20 @@ class MessageGuardCog(commands.Cog):
         if message.channel.category.name != self.monitored_category:
             return
 
+
+        # Get the part of the channel name up to the last separator (including it)
+        def get_channel_prefix(channel_name):
+            parts = channel_name.split('︱')
+            # Check if there are at least 3 parts: something like 🎤equipo︱number︱
+            if len(parts) >= 3 and parts[1].isdigit():
+                # Rebuild the prefix up to and including the second separator
+                return '︱'.join(parts[:2]) + '︱'
+            return channel_name  # Return as is if the structure is not matched
+        formated_channel_name = get_channel_prefix(message.channel.name)
+
+
         # Check if channel is NOT in the allowed list
-        if message.channel.name not in self.allowed_channels:
+        if formated_channel_name not in self.allowed_channels:
             try:
                 await message.delete()
                 await message.channel.send(

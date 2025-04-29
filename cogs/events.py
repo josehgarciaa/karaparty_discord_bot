@@ -73,10 +73,21 @@ class EventCog(commands.Cog):
         if message.author.bot:
             return
 
+        # Get the part of the channel name up to the last separator (including it)
+        def get_channel_prefix(channel_name):
+            last_sep_index = channel_name.rfind('︱')
+            if last_sep_index != -1:
+                return channel_name[:last_sep_index + 1]
+            return channel_name  # fallback, unlikely but safe
+
+        channel_prefix = get_channel_prefix(message.channel.name)
+
+
+
         # Check that the message is in the correct category and channel.
         in_karaoke_category = (message.channel.category and 
                                message.channel.category.name == self.category_name)
-        in_monitored_channel = message.channel.name in self.monitored_channels
+        in_monitored_channel = channel_prefix in self.monitored_channels
         team_name = message.channel.name
 
         if in_karaoke_category and in_monitored_channel:
