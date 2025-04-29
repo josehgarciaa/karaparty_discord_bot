@@ -5,6 +5,8 @@ import os
 import yaml
 from utils.error_reporter import report_error
 
+import time 
+
 # Path to the YAML file
 config_path = "configs/config.yaml"
 try:
@@ -20,13 +22,17 @@ url = config["kai_api"]["song_endpoint"]
 print(url)
 
 
-try:
-    response = requests.get(url)
-    if response.status_code == 200:
-        print("Server is UP and responding!")
-        print("Data received:")
-        print(response.json())
-    else:
-        print(f"Server responded with status code: {response.status_code}")
-except requests.exceptions.RequestException as e:
-    print(f"Error connecting to the server: {e}")
+for t in [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]:
+
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            print("Server is UP and responding!")
+            print("Data received:")
+            print(response.json())
+        else:
+            print(f"Server responded with status code: {response.status_code}")
+    except requests.exceptions.RequestException as e:
+        print(f"Error connecting to the server: {e}")
+
+    time.sleep(60)
