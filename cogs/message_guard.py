@@ -20,7 +20,7 @@ class MessageGuardCog(commands.Cog):
         self.bot = bot
 
         # Read configuration values
-        self.allowed_channels: list[str] = bot.config["bot"]["monitored_channels"]
+        self.allowed_channels: list[str]= bot.config["bot"]["monitored_channels"] + bot.config["bot"]["free_talk_channels"]
         self.monitored_category: str = bot.config["bot"]["monitored_category"]
         self.warning_message: str = "Cant write here"
 

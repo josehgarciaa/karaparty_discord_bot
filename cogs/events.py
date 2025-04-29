@@ -36,6 +36,8 @@ class EventCog(commands.Cog):
         # Configuration details
         self.category_name: str = self.config["bot"]["monitored_category"]
         self.monitored_channels: list[str] = self.config["bot"]["monitored_channels"]
+        self.free_talk_channels: list[str] = self.config["bot"]["free_talk_channels"]
+        
         self.output_channel: str = self.config["bot"]["output_channel"]
         self.notification_channel: str = self.config["bot"]["notification_channel"]
 
@@ -86,6 +88,7 @@ class EventCog(commands.Cog):
                                                 channel=message.channel,
                                                 delete_after=20)                
                 return
+
 
             if self.queue.is_dispatched(link, team_name):
                 await message.delete()
