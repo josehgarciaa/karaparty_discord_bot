@@ -8,3 +8,6 @@ google-api-python-client
 openai 
 pydantic 
 instructor
+fastapi 
+uvicorn
+requests
