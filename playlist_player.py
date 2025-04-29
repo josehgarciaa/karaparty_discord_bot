@@ -172,6 +172,7 @@ async def save_json_async(file_name: str, data):
 async def find_team_for_song(next_video_link: str, played_songs):
     dispatched_songs = get_current_songs()
     for song in dispatched_songs:
+        print(normalize_youtube_link(song["link"]) , normalize_youtube_link(next_video_link), normalize_youtube_link(song["link"]) == normalize_youtube_link(next_video_link) )
         if normalize_youtube_link(song["link"]) == normalize_youtube_link(next_video_link) and song not in played_songs:
             return song["team"], song
     return None, None
