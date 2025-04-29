@@ -20,8 +20,40 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
-DISPATCHED_SONGS_FILE = "dispatched_songs.json"
-PLAYED_SONGS_FILE = "played_songs.json"
+import requests
+import os
+import yaml
+from utils.error_reporter import report_error
+
+
+PLAYED_SONGS_FILE ="played_song.json"
+
+def get_current_songs():
+    """Fetches the current songs from the configured FastAPI server."""
+    config_path = "configs/config.yaml"
+    
+    try:
+        with open(config_path, "r", encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+    except Exception as e:
+        report_error(e, context="Please, remember to fill your configs/config.yaml file. Template is at config.yaml.template")
+        raise e  # Stop execution if config cannot be loaded
+
+    try:
+        url = config["kai_api"]["song_endpoint"]
+    except KeyError as e:
+        report_error(e, context="Missing 'kai_api' or 'song_endpoint' in config.yaml")
+        raise e
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raises HTTPError for bad status codes
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        report_error(e, context=f"Error connecting to the server at {url}")
+        raise e
+
+
 
 
 async def init_browser() -> Chrome:
@@ -66,6 +98,8 @@ async def show_popup(driver: Chrome, message: str) -> None:
     driver.execute_script(script)
 
 
+
+
 async def extract_next_video(driver: Chrome) -> Optional[Dict[str, str]]:
     try:
         next_video_element = driver.find_element(
@@ -94,7 +128,8 @@ async def save_json_async(file_name: str, data):
         await f.write(json.dumps(data, indent=4))
 
 
-async def find_team_for_song(next_video_link: str, dispatched_songs, played_songs):
+async def find_team_for_song(next_video_link: str, played_songs):
+    dispatched_songs = get_current_songs()
     for song in dispatched_songs:
         if song["link"] == next_video_link and song not in played_songs:
             return song["team"], song
@@ -102,7 +137,18 @@ async def find_team_for_song(next_video_link: str, dispatched_songs, played_song
 
 
 async def on_youtube_playlist_page(driver: Chrome) -> bool:
-    current_url = driver.current_url
+
+    try:
+        current_url = driver.current_url
+
+        print(current_url)
+    except Exception as e:
+        print(f"Error getting current_url: {e}")
+        return False
+
+    if not current_url:
+        return False
+
     print(current_url)
     return "youtube.com/watch" in current_url and "&list=" in current_url
 
@@ -122,15 +168,14 @@ async def monitor_video(driver: Chrome) -> None:
             duration = driver.execute_script(
                 "return document.querySelector('.video-stream').duration;"
             )
-
+            print(current_time,duration )
             if duration - current_time <= 10 and not notified:
                 next_video = await extract_next_video(driver)
 
                 if next_video:
-                    dispatched_songs = await load_json_async(DISPATCHED_SONGS_FILE)
                     played_songs = await load_json_async(PLAYED_SONGS_FILE)
 
-                    team, matched_song = await find_team_for_song(next_video['link'], dispatched_songs, played_songs)
+                    team, matched_song = await find_team_for_song(next_video['link'],  played_songs)
 
                     if team:
                         message = f"🎤 Next team is #{team} → singing: {next_video['title']}"
