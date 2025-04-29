@@ -26,6 +26,45 @@ import yaml
 from utils.error_reporter import report_error
 
 
+def normalize_youtube_link(link):
+    """
+    Normalize YouTube video links to the standard desktop format.
+    Preserves important parameters like list (playlist) and t (timestamp).
+    """
+    # Parse URL
+    parsed = urlparse(link)
+    
+    query = parse_qs(parsed.query)
+    video_id = None
+    params = {}
+    
+    # Detect video ID
+    if 'v' in query:
+        video_id = query['v'][0]
+    elif parsed.netloc in ['youtu.be']:
+        video_id = parsed.path.lstrip('/')
+    elif 'watch' in parsed.path:
+        # Fallback for watch URLs without v param
+        video_id_match = re.search(r'v=([^&]+)', parsed.query)
+        if video_id_match:
+            video_id = video_id_match.group(1)
+
+    if not video_id:
+        raise ValueError(f"Could not extract video ID from link: {link}")
+
+    # Now preserve extra params like playlist ID and timestamp
+    for key in ['list', 't', 'index']:
+        if key in query:
+            params[key] = query[key][0]
+
+    # Build final URL
+    base_url = f"https://www.youtube.com/watch?v={video_id}"
+    if params:
+        base_url += '&' + urlencode(params)
+
+    return base_url
+
+
 PLAYED_SONGS_FILE ="played_song.json"
 
 def get_current_songs():
