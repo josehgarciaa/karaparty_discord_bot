@@ -174,11 +174,19 @@ async def save_json_async(file_name: str, data):
 
 
 async def find_team_for_song(next_video_link: str, played_songs):
+    print(f"Getting the current songs")
     dispatched_songs = get_current_songs()
+    #print(f"⚠️ disatched_songs : {dispatched_songs}")
+        
+    
+    
     for song in dispatched_songs:
         print(normalize_youtube_link(song["link"]) , normalize_youtube_link(next_video_link), normalize_youtube_link(song["link"]) == normalize_youtube_link(next_video_link) )
         if normalize_youtube_link(song["link"]) == normalize_youtube_link(next_video_link) and song not in played_songs:
             return song["team"], song
+
+    print(f"⚠️ Song not found in dispatched_songs.json: {normalize_youtube_link(next_video_link)}")
+
     return None, None
 
 
@@ -214,13 +222,12 @@ async def monitor_video(driver: Chrome) -> None:
             duration = driver.execute_script(
                 "return document.querySelector('.video-stream').duration;"
             )
-            print(current_time,duration )
             if duration - current_time <= 10 and not notified:
                 next_video = await extract_next_video(driver)
-
+                print("Evaluating next video", next_video['link'],"\n",next_video['title'])
                 if next_video:
                     played_songs = await load_json_async(PLAYED_SONGS_FILE)
-
+                    print("loaded played_songs", played_songs)
                     team, matched_song = await find_team_for_song(next_video['link'],  played_songs)
 
                     if team:
