@@ -28,44 +28,31 @@ import re
 from urllib.parse import urlparse, parse_qs, urlencode
 
 
+
 def normalize_youtube_link(link):
     """
-    Normalize YouTube video links to the standard desktop format.
-    Preserves important parameters like list (playlist) and t (timestamp).
+    Normalize any YouTube link to the simplest desktop format:
+    https://www.youtube.com/watch?v=VIDEO_ID
     """
-    # Parse URL
     parsed = urlparse(link)
-    
     query = parse_qs(parsed.query)
-    video_id = None
-    params = {}
     
-    # Detect video ID
-    if 'v' in query:
-        video_id = query['v'][0]
-    elif parsed.netloc in ['youtu.be']:
+    video_id = None
+    
+    if parsed.netloc in ['youtu.be']:
+        # Short links like youtu.be/VIDEO_ID
         video_id = parsed.path.lstrip('/')
     elif 'watch' in parsed.path:
-        # Fallback for watch URLs without v param
-        video_id_match = re.search(r'v=([^&]+)', parsed.query)
-        if video_id_match:
-            video_id = video_id_match.group(1)
+        # Normal or mobile watch links
+        video_id = query.get('v', [None])[0]
+    else:
+        raise ValueError(f"Unsupported YouTube URL format: {link}")
 
     if not video_id:
         raise ValueError(f"Could not extract video ID from link: {link}")
 
-    # Now preserve extra params like playlist ID and timestamp
-    for key in ['list', 't', 'index']:
-        if key in query:
-            params[key] = query[key][0]
-
-    # Build final URL
-    base_url = f"https://www.youtube.com/watch?v={video_id}"
-    if params:
-        base_url += '&' + urlencode(params)
-
-    return base_url
-
+    # Rebuild the simplest link
+    return f"https://www.youtube.com/watch?v={video_id}"
 
 PLAYED_SONGS_FILE ="played_song.json"
 
@@ -117,24 +104,41 @@ async def init_browser() -> Chrome:
     return driver
 
 
-async def show_popup(driver: Chrome, message: str) -> None:
+async def show_popup(
+    driver: Chrome, 
+    message: str, 
+    font_size: str = "2em", 
+    padding: str = "4px 8px", 
+    duration: int = 20000  # in milliseconds
+) -> None:
+    """
+    Displays a popup message on the webpage controlled by Selenium.
+
+    Args:
+        driver (Chrome): Selenium WebDriver instance.
+        message (str): Text to display.
+        font_size (str): CSS font-size (e.g., '2em', '24px'). Default is '2em'.
+        padding (str): CSS padding (e.g., '4px 8px'). Default is '4px 8px'.
+        duration (int): Time the popup stays on screen in milliseconds. Default is 20000 ms.
+    """
     script = f"""
     const popup = document.createElement('div');
-    popup.style.position='fixed';
-    popup.style.top='20px';
-    popup.style.left='0';
-    popup.style.backgroundColor='rgba(255,255,255,0.9)';
-    popup.style.color='black';
-    popup.style.padding='12px 24px';
-    popup.style.borderRadius='6px';
-    popup.style.boxShadow='0 2px 10px rgba(0,0,0,0.3)';
-    popup.style.zIndex='99999';
-    popup.style.fontWeight='bold';
-    popup.innerText=`{message}`;
-    popup.style.transition='left 20s linear';
+    popup.style.position = 'fixed';
+    popup.style.top = '20px';
+    popup.style.left = '0';
+    popup.style.backgroundColor = 'rgba(255,255,255,0.9)';
+    popup.style.color = 'black';
+    popup.style.padding = '{padding}';
+    popup.style.borderRadius = '6px';
+    popup.style.boxShadow = '0 2px 10px rgba(0,0,0,0.3)';
+    popup.style.zIndex = '99999';
+    popup.style.fontWeight = 'bold';
+    popup.style.fontSize = '{font_size}';
+    popup.innerText = `{message}`;
+    popup.style.transition = 'left {duration}ms linear';
     document.body.appendChild(popup);
-    setTimeout(()=>popup.style.left='100%',100);
-    setTimeout(()=>popup.remove(),20000);
+    setTimeout(() => popup.style.left = '100%', 100);
+    setTimeout(() => popup.remove(), {duration});
     """
     driver.execute_script(script)
 
