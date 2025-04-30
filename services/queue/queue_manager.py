@@ -26,15 +26,22 @@ class QueueManager:
             team (str): The team name (or channel name) that the song is associated with.
             timestamp (datetime, optional): The time the song was submitted. Defaults to UTC time.
         """
+        print(f"[add_link] Attempting to add: {link} for team: {team}")
         if team not in self.queues:
+            print(f"[add_link] Team '{team}' not in queues. Initializing.")
             self.queues[team] = deque()
             self.team_order.append(team)
-
-        self.queues[team].append({
+            print(f"[add_link] Updated team_order: {self.team_order}")
+        
+        entry = {
             "team": team,
             "link": link,
             "timestamp": (timestamp or datetime.utcnow()).strftime("%Y-%m-%d %H:%M")
-        })
+        }
+        self.queues[team].append(entry)
+        print(f"[add_link] Added entry to team '{team}': {entry}")
+        print(f"[add_link] Current queue for team '{team}': {list(self.queues[team])}")
+
 
     def get_link(self) -> Optional[dict]:
         """
@@ -43,15 +50,23 @@ class QueueManager:
         Returns:
             Optional[dict]: The next song entry, or None if no songs are pending.
         """
+        print(f"[get_link] Starting retrieval. Current team_order: {self.team_order}")
         while self.team_order:
             team = self.team_order[0]
+            print(f"[get_link] Checking team '{team}'")
+            
             if self.queues[team]:
                 song = self.queues[team].popleft()
+                print(f"[get_link] Returning song from team '{team}': {song}")
                 self.team_order.rotate(-1)
+                print(f"[get_link] Rotated team_order: {self.team_order}")
                 return song
             else:
+                print(f"[get_link] No songs left in team '{team}'. Removing team from rotation.")
                 self.team_order.popleft()
+        print("[get_link] No songs left in any team.")
         return None
+
 
     def is_empty(self) -> bool:
         """

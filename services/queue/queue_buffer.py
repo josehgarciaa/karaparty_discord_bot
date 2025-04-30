@@ -116,6 +116,7 @@ class QueueBuffer:
         for entry in self.pending:
             team = entry["team"]
             link = entry["link"]
+            print("Adding the song to the queue: ", team, link)
             queue.add_link(link=link, team=team, timestamp=datetime.utcnow())
 
         # Dispatch up to 3 songs from the live queue.
@@ -123,6 +124,7 @@ class QueueBuffer:
         number_of_real_dispatched = 0
         for _ in range(self.dispatch_number):
             song = queue.get_link()
+            print("I will try to dispatch following song: ", song)
             if song:
                 dispatched_songs.append(song)
                 queue.mark_dispatched(song["link"], song["team"])
