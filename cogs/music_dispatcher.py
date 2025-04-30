@@ -20,8 +20,8 @@ class MusicDispatcherCog(commands.Cog):
             "dispatch_frequency": "Defines the times in which the songs are dispatched in seconds.",
             "dispatch_number": "Defines the number of songs dispatched every dispatched time."
         }
-        self.dispatch_frequency = 60  # Default value
-        self.dispatch_number = 3  # Default value
+        self.dispatch_frequency = 120  # Default value
+        self.dispatch_number = 1  # Default value
         self.buffer.set_dispatch_number(self.dispatch_number)
 
         print("Managment channel:", self.managment_channel)

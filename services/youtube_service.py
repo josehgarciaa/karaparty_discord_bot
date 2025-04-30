@@ -3,6 +3,7 @@ from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 from  google.auth.transport.requests import Request
 import json
+import time
 
 class YouTubeService:
     def __init__(self, client_secret_file, credentials_file, playlist_id):
@@ -71,6 +72,8 @@ class YouTubeService:
             }
         )
         response = request.execute()
+        time.sleep(1)
+
         return response
 
     @staticmethod
